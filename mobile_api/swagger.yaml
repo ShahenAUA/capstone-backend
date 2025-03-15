@@ -10,7 +10,7 @@ info:
 host: 127.0.0.1:8000
 schemes:
 - http
-basePath: /
+basePath: /api
 consumes:
 - application/json
 produces:
@@ -24,5 +24,116 @@ securityDefinitions:
       Bearer {token}"'
 security:
 - Bearer: []
-paths: {}
-definitions: {}
+paths:
+  /login:
+    post:
+      operationId: login_create
+      description: ''
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/Login'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/Login'
+      tags:
+      - login
+    parameters: []
+  /register:
+    post:
+      operationId: register_create
+      description: ''
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/Register'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/Register'
+      tags:
+      - register
+    parameters: []
+  /verify:
+    post:
+      operationId: verify_create
+      description: ''
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/Verify'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/Verify'
+      tags:
+      - verify
+    parameters: []
+definitions:
+  Login:
+    required:
+    - email
+    - password
+    type: object
+    properties:
+      email:
+        title: Email
+        type: string
+        format: email
+        minLength: 1
+      password:
+        title: Password
+        type: string
+        minLength: 1
+  Register:
+    required:
+    - password
+    type: object
+    properties:
+      first_name:
+        title: First name
+        type: string
+        maxLength: 150
+      last_name:
+        title: Last name
+        type: string
+        maxLength: 150
+      email:
+        title: Email address
+        type: string
+        format: email
+        maxLength: 254
+      password:
+        title: Password
+        type: string
+        maxLength: 128
+        minLength: 1
+      phone:
+        title: Phone
+        type: string
+  Verify:
+    required:
+    - email
+    - code
+    type: object
+    properties:
+      email:
+        title: Email
+        type: string
+        format: email
+        minLength: 1
+      code:
+        title: Code
+        type: string
+        maxLength: 6
+        minLength: 1

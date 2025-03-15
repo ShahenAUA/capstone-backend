@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt',
+    'pet_welfare',
     'mobile_api',
 ]
 
@@ -81,7 +82,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': "pet_welfare",
-        'USER': "root",
+        'USER': "",
         'PASSWORD': "",
         'HOST': "127.0.0.1",
         'PORT': "3306"
@@ -164,9 +165,14 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+
+
 secrets_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'secrets.py')
 if os.path.exists(secrets_path):
-    from .secrets import DB_PASSWORD #, FE_HOST_URL, BE_HOST_URL
+    from .secrets import DB_USER, DB_PASSWORD #, FE_HOST_URL, BE_HOST_URL
     # FE_HOST_URL = FE_HOST_URL
     # BE_HOST_URL = BE_HOST_URL
+    DATABASES['default']['USER'] = DB_USER
     DATABASES['default']['PASSWORD'] = DB_PASSWORD
