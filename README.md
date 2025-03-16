@@ -15,12 +15,12 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-## Mke sure to run the migrations of the database
+## Do not forget to copy the content of `pet_welfare/secrets.example.py` into `pet_welfare/secrets.py` and adjust the values for your configuration
+
+## Make sure to run the migrations of the database
 ``` sh
 py manage.py migrate
 ```
-
-## Do not forget to copy the content of `pet_welfare/secrets.example.py` into `pet_welfare/secrets.py` and adjust the values for your configuration
 
 ## Finally run the server
 ``` sh
