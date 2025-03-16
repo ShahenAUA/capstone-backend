@@ -81,11 +81,11 @@ WSGI_APPLICATION = 'pet_welfare.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': "pet_welfare",
-        'USER': "",
-        'PASSWORD': "",
-        'HOST': "127.0.0.1",
-        'PORT': "3306"
+        'NAME': 'pet_welfare',
+        'USER': 'user',
+        'PASSWORD': 'userpassword',
+        'HOST': 'db',
+        'PORT': '3306',
     }
 }
 
@@ -169,10 +169,10 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 
 
-secrets_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'secrets.py')
-if os.path.exists(secrets_path):
-    from .secrets import DB_USER, DB_PASSWORD #, FE_HOST_URL, BE_HOST_URL
-    # FE_HOST_URL = FE_HOST_URL
-    # BE_HOST_URL = BE_HOST_URL
-    DATABASES['default']['USER'] = DB_USER
-    DATABASES['default']['PASSWORD'] = DB_PASSWORD
+# secrets_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'secrets.py')
+# if os.path.exists(secrets_path):
+#     from .secrets import DB_USER, DB_PASSWORD #, FE_HOST_URL, BE_HOST_URL
+#     # FE_HOST_URL = FE_HOST_URL
+#     # BE_HOST_URL = BE_HOST_URL
+#     DATABASES['default']['USER'] = DB_USER
+#     DATABASES['default']['PASSWORD'] = DB_PASSWORD

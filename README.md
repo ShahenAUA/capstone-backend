@@ -26,3 +26,10 @@ py manage.py migrate
 ``` sh
 py manage.py runserver
 ```
+
+# DOCKER SETUP
+## Build and start containers using
+``` sh
+docker-compose build
+docker-compose up
+```
