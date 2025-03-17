@@ -26,8 +26,13 @@ SECRET_KEY = 'django-insecure-0o93f0x@fz-xpn$6n^!jjxb2p81o%zx*9twwz#*u40_hg4#p+s
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    '0.0.0.0',
+    'pawsaver',
+    'pawsaver.ssimyan.com'
+]
 
 # Application definition
 

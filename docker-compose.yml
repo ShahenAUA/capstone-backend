@@ -1,25 +1,44 @@
 services:
-  web:
-    build: .
-    command: ["./scripts/wait-for-it.sh", "db:3306", "--", "sh", "-c", "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]
-    volumes:
-      - .:/app
-    ports:
-      - "8000:8000"
-    depends_on:
-      - db
+    pawsaver:
+        build: .
+        command:
+            [
+                "./scripts/wait-for-it.sh",
+                "db:3306",
+                "--",
+                "sh",
+                "-c",
+                "python manage.py migrate && python manage.py runserver 0.0.0.0:8000",
+            ]
+        volumes:
+            - .:/app
+        ports:
+            - "8000:8000"
+        depends_on:
+            - db
+        networks:
+            - web
+            - pawsaver_internal
 
-  db:
-    image: mysql:8.0
-    volumes:
-      - mysql_data:/var/lib/mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: pet_welfare
-      MYSQL_USER: user
-      MYSQL_PASSWORD: userpassword
-    ports:
-      - "3306:3306"
+    db:
+        image: mysql:8.0
+        volumes:
+            - mysql_data:/var/lib/mysql
+        environment:
+            MYSQL_ROOT_PASSWORD: rootpassword
+            MYSQL_DATABASE: pet_welfare
+            MYSQL_USER: user
+            MYSQL_PASSWORD: userpassword
+        ports:
+            - "3306:3306"
+        networks:
+            - pawsaver_internal
 
 volumes:
-  mysql_data:
+    mysql_data:
+
+networks:
+    web:
+        external: true
+    pawsaver_internal:
+        internal: true
