@@ -8,5 +8,7 @@ urlpatterns = [
     path('verify', VerifyView.as_view(), name='verify'),
     path('login', LoginView.as_view(), name='login'),
     
+    path('user/me', UserGetMeView.as_view(), name='user-me'),
+    
     re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json')
 ]

@@ -6,12 +6,23 @@ from django.contrib.auth.models import User
 from mobile_api.constants import VERIFICATION_CODE_EXPIRY_TIME
 
 class Profile(models.Model):
+    INDIVIDUAL = "individual"
+    SHELTER = "shelter"
+    
+    USER_TYPE_CHOICES = [
+        (INDIVIDUAL, "Individual"),
+        (SHELTER, "Shelter"),
+    ]
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     phone = models.CharField(max_length=15, blank=True, null=True, unique=True)
     profile_picture = models.ImageField(upload_to="profile_pictures/", blank=True, null=True)
     verification_code = models.CharField(max_length=6, blank=True, null=True)   
     verification_code_expiry = models.DateTimeField(blank=True, null=True)
-    
+    user_type = models.CharField(max_length=10, choices=USER_TYPE_CHOICES, default=INDIVIDUAL)
+
+    def is_shelter(self):
+        return self.user_type == self.SHELTER
+
     def generate_verification_code(self):
         self.verification_code = ''.join(random.choices(string.digits, k=6))
         self.verification_code_expiry = timezone.now() + VERIFICATION_CODE_EXPIRY_TIME
