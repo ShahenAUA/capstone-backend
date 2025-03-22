@@ -2,12 +2,19 @@ import random
 import string
 from django.db import models
 from django.utils import timezone
+from django.core.validators import RegexValidator
 from django.contrib.auth.models import User
 from mobile_api.constants import VERIFICATION_CODE_EXPIRY_TIME
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    phone = models.CharField(max_length=15, blank=True, null=True, unique=True)
+    phone = models.CharField(
+        max_length=15,
+        validators=[RegexValidator(regex=r'^\+?1?\d{9,15}$', message="Enter a valid phone number.")],
+        blank=True,
+        null=True,
+        unique=True
+    )
     profile_picture = models.ImageField(upload_to="profile_pictures/", blank=True, null=True)
     verification_code = models.CharField(max_length=6, blank=True, null=True)   
     verification_code_expiry = models.DateTimeField(blank=True, null=True)
