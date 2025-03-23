@@ -1,11 +1,18 @@
-from django.contrib.auth.models import User
 from rest_framework import serializers
+from django.db import IntegrityError
+from django.contrib.auth.models import User
+from django.core.validators import RegexValidator
+from django.contrib.auth.password_validation import validate_password
 from pet_welfare.models import Profile
 from mobile_api.utils import send_verification_email
-from django.db import IntegrityError
 
 class RegisterSerializer(serializers.ModelSerializer):
-    phone = serializers.CharField(required=False, allow_blank=True)
+    phone = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        validators=[RegexValidator(regex=r'^\+?1?\d{9,15}$', message="Enter a valid phone number.")],
+    )
+    password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
 
     class Meta:
         model = User
