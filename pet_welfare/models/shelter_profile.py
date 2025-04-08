@@ -9,7 +9,6 @@ class ShelterProfile(models.Model):
     capacity = models.PositiveIntegerField(default=0)
     registration_number = models.CharField(max_length=50, unique=True)
     website = models.URLField(blank=True, null=True)
-    phone = models.CharField(max_length=15, blank=True, null=True)
 
     class Meta:
         db_table = "shelter_profiles"

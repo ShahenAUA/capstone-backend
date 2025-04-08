@@ -15,4 +15,3 @@ class UserGetMeView(generics.ListAPIView):
         user = request.user
         serializer = UserGetMeSerializer(user)
         return construct_response(data=serializer.data, status=status.HTTP_200_OK)
-    

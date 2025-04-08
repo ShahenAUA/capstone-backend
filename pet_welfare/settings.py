@@ -64,7 +64,9 @@ ROOT_URLCONF = 'pet_welfare.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            BASE_DIR / 'mobile_api/templates/',
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -171,7 +173,7 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
+FROM_EMAIL = 'noreply@petwelfare.com'
 
 
 # secrets_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'secrets.py')

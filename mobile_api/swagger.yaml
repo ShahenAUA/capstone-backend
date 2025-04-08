@@ -43,6 +43,79 @@ paths:
       tags:
       - login
     parameters: []
+  /password-reset:
+    post:
+      operationId: password-reset_create
+      description: Send reset code to user's email
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          required:
+          - email
+          type: object
+          properties:
+            email:
+              type: string
+      responses:
+        '200':
+          description: Reset code/link sent
+          examples:
+            application/json:
+              message: Password reset code has been sent to your email.
+              identifier: encoded_pk
+      tags:
+      - password-reset
+    parameters: []
+  /password-reset-confirm/{encoded_pk}/{token}:
+    post:
+      operationId: password-reset-confirm_create
+      description: ''
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/PasswordResetConfirm'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/PasswordResetConfirm'
+      tags:
+      - password-reset-confirm
+    parameters:
+    - name: encoded_pk
+      in: path
+      required: true
+      type: string
+    - name: token
+      in: path
+      required: true
+      type: string
+  /password-reset/verify-code/{encoded_pk}:
+    post:
+      operationId: password-reset_verify-code_create
+      description: ''
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/PasswordResetCodeVerify'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/PasswordResetCodeVerify'
+      tags:
+      - password-reset
+    parameters:
+    - name: encoded_pk
+      in: path
+      required: true
+      type: string
   /register:
     post:
       operationId: register_create
@@ -60,6 +133,41 @@ paths:
             $ref: '#/definitions/Register'
       tags:
       - register
+    parameters: []
+  /register_shelter:
+    post:
+      operationId: register_shelter_create
+      description: ''
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/RegisterShelter'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/RegisterShelter'
+      tags:
+      - register_shelter
+    parameters: []
+  /user/me:
+    get:
+      operationId: user_me_list
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/UserGetMe'
+      tags:
+      - user
+      security:
+      - Bearer: []
     parameters: []
   /verify:
     post:
@@ -95,11 +203,97 @@ definitions:
         title: Password
         type: string
         minLength: 1
+  PasswordResetConfirm:
+    required:
+    - new_password
+    type: object
+    properties:
+      new_password:
+        title: New password
+        type: string
+        minLength: 1
+  PasswordResetCodeVerify:
+    required:
+    - reset_code
+    type: object
+    properties:
+      reset_code:
+        title: Reset code
+        type: string
+        pattern: ^\d{6}$
+        minLength: 1
   Register:
     required:
+    - email
+    - first_name
+    - last_name
     - password
     type: object
     properties:
+      email:
+        title: Email
+        type: string
+        minLength: 1
+      first_name:
+        title: First name
+        type: string
+        minLength: 1
+      last_name:
+        title: Last name
+        type: string
+        minLength: 1
+      phone:
+        title: Phone
+        type: string
+        pattern: ^\+?1?\d{9,15}$
+      password:
+        title: Password
+        type: string
+        minLength: 1
+  RegisterShelter:
+    required:
+    - email
+    - name
+    - registration_number
+    - password
+    type: object
+    properties:
+      email:
+        title: Email
+        type: string
+        format: email
+        minLength: 1
+      name:
+        title: Name
+        type: string
+        minLength: 1
+      registration_number:
+        title: Registration number
+        type: string
+        maxLength: 50
+        minLength: 1
+      phone:
+        title: Phone
+        type: string
+        pattern: ^\+?1?\d{9,15}$
+      password:
+        title: Password
+        type: string
+        minLength: 1
+  UserGetMe:
+    required:
+    - phone
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      email:
+        title: Email address
+        type: string
+        format: email
+        maxLength: 254
       first_name:
         title: First name
         type: string
@@ -108,19 +302,14 @@ definitions:
         title: Last name
         type: string
         maxLength: 150
-      email:
-        title: Email address
+      date_joined:
+        title: Date joined
         type: string
-        format: email
-        maxLength: 254
-      password:
-        title: Password
-        type: string
-        maxLength: 128
-        minLength: 1
+        format: date-time
       phone:
         title: Phone
         type: string
+        minLength: 1
   Verify:
     required:
     - email

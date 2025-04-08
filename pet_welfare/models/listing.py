@@ -15,12 +15,10 @@ class Listing(models.Model):
     ADOPTION_STATUSES = [
         ("available", "Available"),
         ("adopted", "Adopted"),
-        ("pending", "Pending"),
     ]
 
     LOST_STATUSES = [
         ("lost", "Lost"),
-        ("found", "Found"),
         ("reunited", "Reunited"),
     ]
 
