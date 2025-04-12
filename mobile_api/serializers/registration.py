@@ -3,9 +3,9 @@ from django.contrib.auth.models import User
 from django.core.validators import RegexValidator, validate_email
 from django.contrib.auth.password_validation import validate_password
 from pet_welfare.models import Profile, ShelterProfile
-from mobile_api.utils import send_verification_email, validate_name
+from mobile_api.utils import validate_name
 from mobile_api.constants import NameTypes
-from mobile_api.messages import USER_EXISTS, INVALID_PHONE, PHONE_EXISTS, SHELTER_EXISTS
+from mobile_api.messages import USER_EXISTS, INVALID_PHONE, PHONE_EXISTS, SHELTER_EXISTS, INVALID_OR_EXPIRED_VERIFICATION_CODE, USER_NOT_FOUND
 
 class RegisterSerializer(serializers.Serializer):
     email = serializers.CharField(required=True, validators=[validate_email])
@@ -66,11 +66,13 @@ class VerifySerializer(serializers.Serializer):
             user = User.objects.get(username=email)
             profile = Profile.objects.get(user=user)
         except (User.DoesNotExist, Profile.DoesNotExist):
-            raise serializers.ValidationError("Invalid email or code.")
+            raise serializers.ValidationError(USER_NOT_FOUND)
 
         if not profile.verify_verification_code(code):
-            raise serializers.ValidationError("Invalid verification code.")
+            raise serializers.ValidationError(INVALID_OR_EXPIRED_VERIFICATION_CODE)
 
+        # TODO - in case of expired code delete user or allow retrying verification
+        
         user.is_active = True
         user.save()
 

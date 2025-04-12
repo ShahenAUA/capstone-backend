@@ -5,7 +5,7 @@ from rest_framework.exceptions import ValidationError
 from pet_welfare.models import Profile, ShelterProfile
 from mobile_api.serializers import RegisterSerializer, RegisterShelterSerializer, VerifySerializer
 from mobile_api.utils import send_verification_email, handle_validation_error, construct_error, construct_response
-from mobile_api.messages import VERIFIED_SUCCESS, UNKNOWN_ERROR
+from mobile_api.messages import REGISTERED_SUCCESS, VERIFIED_SUCCESS, UNKNOWN_ERROR
 
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
@@ -37,7 +37,7 @@ class RegisterView(generics.CreateAPIView):
 
             send_verification_email(user.email, verification_code)
 
-            return user
+            return construct_response(message=REGISTERED_SUCCESS, data={"user_id": user.id}, status=status.HTTP_200_OK)
         except ValidationError as e:
             return handle_validation_error(e)
         except Exception as e:
@@ -74,7 +74,7 @@ class RegisterShelterView(generics.CreateAPIView):
 
             send_verification_email(user.email, verification_code)
 
-            return construct_response(data={"user": user}, status=status.HTTP_200_OK)
+            return construct_response(message=REGISTERED_SUCCESS, data={"user_id": user.id}, status=status.HTTP_200_OK)
         except ValidationError as e:
             return handle_validation_error(e)
         except Exception as e:
@@ -90,7 +90,7 @@ class VerifyView(generics.GenericAPIView):
             serializer = self.serializer_class(data=request.data)
             serializer.is_valid(raise_exception=True)
             
-            construct_response(message=VERIFIED_SUCCESS, status=status.HTTP_200_OK)
+            return construct_response(message=VERIFIED_SUCCESS, status=status.HTTP_200_OK)
         except ValidationError as e:
             return handle_validation_error(e)
         except Exception as e:

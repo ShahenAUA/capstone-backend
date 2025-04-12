@@ -99,6 +99,7 @@ DATABASES = {
 from datetime import timedelta
 
 REST_FRAMEWORK = {
+    'EXCEPTION_HANDLER': 'mobile_api.utils.custom_exception_handler',
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
@@ -107,6 +108,8 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
         'rest_framework.permissions.IsAuthenticated',
     ),
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
 }
 
 SIMPLE_JWT = {
@@ -175,11 +178,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 FROM_EMAIL = 'noreply@petwelfare.com'
 
+REFRESH_TOKEN_EXPIRED_STATUS_CODE = 497
+ACCESS_TOKEN_EXPIRED_STATUS_CODE = 498
 
-# secrets_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'secrets.py')
-# if os.path.exists(secrets_path):
-#     from .secrets import DB_USER, DB_PASSWORD #, FE_HOST_URL, BE_HOST_URL
-#     # FE_HOST_URL = FE_HOST_URL
-#     # BE_HOST_URL = BE_HOST_URL
-#     DATABASES['default']['USER'] = DB_USER
-#     DATABASES['default']['PASSWORD'] = DB_PASSWORD
+secrets_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'secrets.py')
+if os.path.exists(secrets_path):
+    from .secrets import DB_USER, DB_PASSWORD, DB_HOST #, FE_HOST_URL, BE_HOST_URL
+    # FE_HOST_URL = FE_HOST_URL
+    # BE_HOST_URL = BE_HOST_URL
+    DATABASES['default']['USER'] = DB_USER
+    DATABASES['default']['PASSWORD'] = DB_PASSWORD
+    DATABASES['default']['HOST'] = DB_HOST

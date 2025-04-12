@@ -17,7 +17,8 @@ from mobile_api.messages import (
     RESET_CODE_SENT,
     RESET_CODE_VERIFIED,
     PASSWORD_RESET_SUCCESSFULLY,
-    CANNOT_RESET_TO_OLD_PASSWORD
+    CANNOT_RESET_TO_OLD_PASSWORD,
+    UNKNOWN_ERROR
 )
 from mobile_api.utils import construct_response, construct_error, handle_validation_error # , bulk_logout
 
@@ -68,6 +69,9 @@ class PasswordResetRequestView(generics.GenericAPIView):
             return construct_response(message=RESET_CODE_SENT, data={'identifier': encoded_pk}, status=status.HTTP_200_OK)
         except ValidationError as e:
             return handle_validation_error(e)
+        except Exception as e:
+            print(e)
+            return construct_error(message=UNKNOWN_ERROR, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class PasswordResetCodeVerifyView(generics.GenericAPIView):
     permission_classes = (AllowAny,)
@@ -89,6 +93,9 @@ class PasswordResetCodeVerifyView(generics.GenericAPIView):
             return construct_response(message=RESET_CODE_VERIFIED, data=data, status=status.HTTP_200_OK)
         except ValidationError as e:
             return handle_validation_error(e)
+        except Exception as e:
+            print(e)
+            return construct_error(message=UNKNOWN_ERROR, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class PasswordResetConfirmView(generics.GenericAPIView):
     permission_classes = (AllowAny,)
@@ -112,3 +119,6 @@ class PasswordResetConfirmView(generics.GenericAPIView):
             return construct_response(message=PASSWORD_RESET_SUCCESSFULLY, status=status.HTTP_200_OK)
         except ValidationError as e:
             return handle_validation_error(e)
+        except Exception as e:
+            print(e)
+            return construct_error(message=UNKNOWN_ERROR, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

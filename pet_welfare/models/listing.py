@@ -12,19 +12,25 @@ class Listing(models.Model):
         (LOST, "Lost"),
     ]
 
+    # TODO - maybe join these types into available/handled
+    AVAILABLE = "available"
+    ADOPTED = "adopted"
     ADOPTION_STATUSES = [
-        ("available", "Available"),
-        ("adopted", "Adopted"),
+        (AVAILABLE, "Available"),
+        (ADOPTED, "Adopted"),
     ]
 
+    LOST = "lost"
+    REUNITED = "reunited"
     LOST_STATUSES = [
-        ("lost", "Lost"),
-        ("reunited", "Reunited"),
+        (LOST, "Lost"),
+        (REUNITED, "Reunited"),
     ]
 
     DOG = "dog"
     CAT = "cat"
     PARROT = "parrot"
+    TURTLE = "turtle"
     RABBIT = "rabbit"
     FISH = "fish"
     HAMSTER = "hamster"
@@ -34,6 +40,7 @@ class Listing(models.Model):
         (DOG, "Dog"),
         (CAT, "Cat"),
         (PARROT, "Parrot"),
+        (TURTLE, "Turtle"),
         (RABBIT, "Rabbit"),
         (FISH, "Fish"),
         (HAMSTER, "Hamster"),
