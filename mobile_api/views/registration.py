@@ -13,15 +13,15 @@ class RegisterView(generics.CreateAPIView):
     permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):
-        serializer = self.serializer_class(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        phone = serializer.validated_data.get('phone', None)
-        email = serializer.validated_data.get('email', None)
-        first_name = serializer.validated_data.get('first_name', None)
-        last_name = serializer.validated_data.get('last_name', None)
-        password = serializer.validated_data.get('password', None)
-
         try:
+            serializer = self.serializer_class(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            phone = serializer.validated_data.get('phone', None)
+            email = serializer.validated_data.get('email', None)
+            first_name = serializer.validated_data.get('first_name', None)
+            last_name = serializer.validated_data.get('last_name', None)
+            password = serializer.validated_data.get('password', None)
+
             user = User.objects.create_user(
                 username=email,
                 email=email,
