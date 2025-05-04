@@ -23,11 +23,11 @@ urlpatterns = [
     # backlog, email, password if we manage
 
     path('user/listings/adoptions', GetListingsView.as_view(), name='get-listings-adoptions'),
-    # add is_vaccinated to filters
+    # add is_vaccinated to filters, add search
     path('user/listings/adoptions/add', AddListingView.as_view(), name='add-listing-adoption'), # add validation for animal breed from json
     # multiple pictures, one main
     path('user/listings/lost', GetListingsView.as_view(), name='get-listings-lost'),
-    # add is_vaccinated to filters, receive user longitude, latitude optionally, if defined sort by distance of last_seen location
+    # add is_vaccinated to filters, add search, receive user longitude, latitude optionally, if defined sort by distance of last_seen location
     # return approximate distance radius field based on location
     path('user/listings/lost/add', AddListingView.as_view(), name='add-listing-lost'),
     # multiple pictures, one main
