@@ -48,6 +48,9 @@ class ListingListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Listing
         fields = [
+            'id', 'name', 'type', 'breed', 'description', # first picture
+        ]
+        fields = [
             'id', 'name', 'type', 'breed', 'gender', 'birth_date',
             'weight', 'description', 'listing_type', 'status',
             'last_seen_location', 'last_seen_date', 'listing_date', 'age'

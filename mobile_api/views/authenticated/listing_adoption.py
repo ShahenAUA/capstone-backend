@@ -31,7 +31,7 @@ class AddListingView(generics.CreateAPIView):
                 'gender': data.get('gender'),
                 'description': data.get('description'),
                 'listing_type': data['listing_type'],
-                'status': data['status'],
+                'status': Listing.PENDING,
                 'last_seen_location': data.get('last_seen_location'),
                 'last_seen_date': data.get('last_seen_date'),
                 'user': None,
