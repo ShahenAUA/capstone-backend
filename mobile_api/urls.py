@@ -22,30 +22,37 @@ urlpatterns = [
     # first, last name, shelter name, phone, profile picture
     # backlog, email, password if we manage
 
-    path('user/listings/adoptions', GetListingsView.as_view(), name='get-listings-adoptions'),
+    # path('user/listings/adoptions', GetListingsView.as_view(), name='get-listings-adoptions'),
     # add is_vaccinated to filters, add search
-    path('user/listings/adoptions/add', AddListingView.as_view(), name='add-listing-adoption'), # add validation for animal breed from json
+    # path('user/listings/adoptions/add', AddListingView.as_view(), name='add-listing-adoption'), # add validation for animal breed from json
     # multiple pictures, one main
-    path('user/listings/lost', GetListingsView.as_view(), name='get-listings-lost'),
+    # path('user/listings/lost', GetListingsView.as_view(), name='get-listings-lost'),
     # add is_vaccinated to filters, add search, receive user longitude, latitude optionally, if defined sort by distance of last_seen location
     # return approximate distance radius field based on location
-    path('user/listings/lost/add', AddListingView.as_view(), name='add-listing-lost'),
+    # path('user/listings/lost/add', AddListingView.as_view(), name='add-listing-lost'),
     # multiple pictures, one main
+    
+    path('user/listings/adoptions', GetAdoptionListingsView.as_view(), name='get-listings-adoptions'),
+    path('user/listings/adoptions/add', AddAdoptionListingView.as_view(), name='add-listing-adoption'),
+    path('user/listings/lost', GetLostListingsView.as_view(), name='get-listings-lost'),
+    path('user/listings/lost/add', AddLostListingView.as_view(), name='add-listing-lost'),
 
-    path('user/listings/:id', GetListingsView.as_view(), name='get-listings-lost'),
+    
+
+    # path('user/listings/:id', GetListingsView.as_view(), name='get-listings-lost'),
     # return details of the listing, also add user/shelter information like name first name, contact phone, email
 
-    path('user/listings/edit', AddListingView.as_view(), name='add-listing-lost'), # check by authorization
+    # path('user/listings/edit', AddListingView.as_view(), name='add-listing-lost'), # check by authorization
     # edit listing picture
 
-    path('user/listings/adoptions', AddListingView.as_view(), name='add-listing-lost'), # created by user/shelter
+    # path('user/listings/adoptions', AddListingView.as_view(), name='add-listing-lost'), # created by user/shelter
     # return in the same serializer way
-    path('user/listings/lost', AddListingView.as_view(), name='add-listing-lost'), # created by user/shelter
+    # path('user/listings/lost', AddListingView.as_view(), name='add-listing-lost'), # created by user/shelter
     # return in the same serializer way
 
-    path('user/listings/bookmark', AddListingView.as_view(), name='add-listing-lost'),
+    # path('user/listings/bookmark', AddListingView.as_view(), name='add-listing-lost'),
     # receive listing_id, return only success message
-    path('user/listings/get-bookmarks', AddListingView.as_view(), name='add-listing-lost'),
+    # path('user/listings/get-bookmarks', AddListingView.as_view(), name='add-listing-lost'),
     # return same serialized version as adoption serializer
 
     re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json')

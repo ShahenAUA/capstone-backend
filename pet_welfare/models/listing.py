@@ -74,3 +74,7 @@ class Listing(models.Model):
             return (timezone.now().date() - self.birth_date).days // 365
         return None
     
+    @property
+    def main_photo(self):
+        return self.photos.filter(is_main=True).first()
+    
