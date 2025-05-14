@@ -51,15 +51,19 @@ class ListingFilterSerializer(serializers.Serializer):
 class LostListingSerializer(serializers.ModelSerializer):
     age = serializers.SerializerMethodField()
     distance_in_km = serializers.SerializerMethodField()
+    main_photo_url = serializers.SerializerMethodField()
 
     class Meta:
         model = Listing
         fields = [
-            'id', 'name', 'age', 'type', 'breed', 'description', 'distance_in_km' # first picture
+            'id', 'name', 'age', 'type', 'breed', 'description', 'distance_in_km', 'main_photo_url'
         ]
 
     def get_age(self, obj):
         return obj.get_animal_age()
+
+    def get_main_photo_url(self, obj):
+        return obj.get_main_photo_url()
     
     def get_distance_in_km(self, obj):
         user_lat = self.context.get('user_latitude')
@@ -92,11 +96,12 @@ class LostListingSerializer(serializers.ModelSerializer):
 
 class ListingListSerializer(serializers.ModelSerializer):
     age = serializers.SerializerMethodField()
+    main_photo_url = serializers.SerializerMethodField()
 
     class Meta:
         model = Listing
         fields = [
-            'id', 'name', 'age', 'type', 'breed', 'description', # first picture
+            'id', 'name', 'age', 'type', 'breed', 'description', 'main_photo_url'
         ]
         # fields = [
         #     'id', 'name', 'type', 'breed', 'gender', 'birth_date',
@@ -106,3 +111,6 @@ class ListingListSerializer(serializers.ModelSerializer):
 
     def get_age(self, obj):
         return obj.get_animal_age()
+
+    def get_main_photo_url(self, obj):
+        return obj.get_main_photo_url()

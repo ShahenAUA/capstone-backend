@@ -1,6 +1,6 @@
 from django.db import models
 
-MAX_LISTING_PHOTOS = 5  # Or however many you want
+MAX_LISTING_PHOTOS = 5
 
 class ListingPhoto(models.Model):
     listing = models.ForeignKey('Listing', on_delete=models.CASCADE, related_name='photos')

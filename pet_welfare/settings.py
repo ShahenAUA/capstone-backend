@@ -61,6 +61,9 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'pet_welfare.urls'
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -173,6 +176,8 @@ STATIC_URL = 'static/'
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
+BE_HOST_URL="https://pawsaver.ssimyan.com"
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
@@ -183,9 +188,9 @@ ACCESS_TOKEN_EXPIRED_STATUS_CODE = 498
 
 secrets_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'secrets.py')
 if os.path.exists(secrets_path):
-    from .secrets import DB_USER, DB_PASSWORD, DB_HOST #, FE_HOST_URL, BE_HOST_URL
+    from .secrets import DB_USER, DB_PASSWORD, DB_HOST, BE_HOST_URL #, FE_HOST_URL
     # FE_HOST_URL = FE_HOST_URL
-    # BE_HOST_URL = BE_HOST_URL
+    BE_HOST_URL = BE_HOST_URL
     DATABASES['default']['USER'] = DB_USER
     DATABASES['default']['PASSWORD'] = DB_PASSWORD
     DATABASES['default']['HOST'] = DB_HOST

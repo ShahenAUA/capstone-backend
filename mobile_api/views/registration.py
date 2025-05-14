@@ -32,7 +32,7 @@ class RegisterView(generics.CreateAPIView):
             user.is_active = False
             user.save()
 
-            profile = Profile.objects.create(user=user, phone=phone)
+            profile = Profile.objects.create(user=user, phone=phone, user_type=Profile.SHELTER)
             verification_code = profile.generate_verification_code()
 
             send_verification_email(user.email, verification_code)

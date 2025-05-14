@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 from pet_welfare.models.shelter_profile import ShelterProfile
+from pet_welfare.settings import BE_HOST_URL
 
 class Listing(models.Model):
     ADOPTION = "adoption"
@@ -74,6 +75,12 @@ class Listing(models.Model):
             return (timezone.now().date() - self.birth_date).days // 365
         return None
     
+    def get_main_photo_url(self):
+        listing_photo = self.photos.filter(is_main=True).first()
+        if listing_photo and listing_photo.image:
+            return f"{BE_HOST_URL}{listing_photo.image.url}"
+        return None
+
     @property
     def main_photo(self):
         return self.photos.filter(is_main=True).first()

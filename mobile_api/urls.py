@@ -14,11 +14,12 @@ urlpatterns = [
     path('password-reset/verify-code/<str:encoded_pk>', PasswordResetCodeVerifyView.as_view(), name='password-reset-code-verify'),
     path('password-reset-confirm/<str:encoded_pk>/<str:token>', PasswordResetConfirmView.as_view(), name='password-reset-confirm'),
 
-    path('species', UserGetMeView.as_view(), name='get-species'),
+    # path('species', UserGetMeView.as_view(), name='get-species'),
     # receive animal type (dog, cat, ...), return the respective array from json
 
     path('user/me', UserGetMeView.as_view(), name='user-me'),
-    path('user/edit', UserGetMeView.as_view(), name='user-me'),
+    # path('user/edit', UserGetMeView.as_view(), name='user-me'),
+    
     # first, last name, shelter name, phone, profile picture
     # backlog, email, password if we manage
 
