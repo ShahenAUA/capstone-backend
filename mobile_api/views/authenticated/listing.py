@@ -3,7 +3,7 @@ from datetime import timedelta
 from django.utils import timezone
 from rest_framework import generics, status
 from rest_framework.exceptions import ValidationError
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from pet_welfare.models import Listing, Profile, ListingPhoto
 from mobile_api.utils import construct_response, construct_error, handle_validation_error, get_birth_date_for_age
 from mobile_api.serializers import AddAdoptionListingSerializer, AddLostListingSerializer, ListingFilterSerializer, ListingListSerializer, LostListingSerializer
@@ -122,8 +122,9 @@ class AddLostListingView(generics.CreateAPIView):
             return construct_error(message=UNKNOWN_ERROR, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
 class GetAdoptionListingsView(generics.ListAPIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny,]
     serializer_class = ListingListSerializer
+    authentication_classes=[]
 
     def get_queryset(self):
         params = ListingFilterSerializer(data=self.request.query_params)
@@ -162,6 +163,10 @@ class GetAdoptionListingsView(generics.ListAPIView):
             return construct_error(message=UNKNOWN_ERROR, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class GetLostListingsView(GetAdoptionListingsView):
+    permission_classes = [AllowAny,]
+    # serializer_class = LostListingSerializer
+    authentication_classes=[]
+    
     def get_queryset(self):
         params = ListingFilterSerializer(data=self.request.query_params)
         params.is_valid(raise_exception=True)
