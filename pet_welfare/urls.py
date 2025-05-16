@@ -16,9 +16,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path  # type: ignore
+from django.conf.urls.static import static
+from pet_welfare import settings
+from . import views
 
 urlpatterns = [
+    path('', views.healthcheck_view, name='healthcheck-root'),
+
     path('admin/', admin.site.urls),
     
     path('api/', include("mobile_api.urls")),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 from pet_welfare.models.shelter_profile import ShelterProfile
+from pet_welfare.settings import BE_HOST_URL
 
 class Listing(models.Model):
     ADOPTION = "adoption"
@@ -13,18 +14,11 @@ class Listing(models.Model):
     ]
 
     # TODO - maybe join these types into available/handled
-    AVAILABLE = "available"
-    ADOPTED = "adopted"
-    ADOPTION_STATUSES = [
-        (AVAILABLE, "Available"),
-        (ADOPTED, "Adopted"),
-    ]
-
-    LOST = "lost"
-    REUNITED = "reunited"
-    LOST_STATUSES = [
-        (LOST, "Lost"),
-        (REUNITED, "Reunited"),
+    PENDING = "pending"
+    HANDLED = "handled"
+    LISTING_STATUS_CHOICES = [
+        (PENDING, "Pending"),
+        (HANDLED, "Handled"),
     ]
 
     DOG = "dog"
@@ -61,34 +55,33 @@ class Listing(models.Model):
     weight = models.FloatField(null=True, blank=True, help_text="Weight in kg")
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
-
+    is_vaccinated = models.BooleanField(default=False)
     listing_type = models.CharField(max_length=10, choices=LISTING_TYPE_CHOICES)
     listing_date = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="listings")
     shelter = models.ForeignKey(ShelterProfile, on_delete=models.SET_NULL, null=True, blank=True, related_name="listings")
 
-    status = models.CharField(max_length=20)
+    status = models.CharField(max_length=20, choices=LISTING_STATUS_CHOICES)
 
-    last_seen_location = models.CharField(max_length=255, blank=True, null=True)
+    last_seen_location_longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    last_seen_location_latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
     last_seen_date = models.DateField(blank=True, null=True)
 
     class Meta:
         db_table = "listings"
 
-    def clean(self):
-        from django.core.exceptions import ValidationError
-
-        if self.listing_type == self.ADOPTION and self.status not in dict(self.ADOPTION_STATUSES):
-            raise ValidationError({"status": "Invalid status for an adoption listing."})
-        elif self.listing_type == self.LOST and self.status not in dict(self.LOST_STATUSES):
-            raise ValidationError({"status": "Invalid status for a lost listing."})
-
-    def save(self, *args, **kwargs):
-        self.clean()
-        super().save(*args, **kwargs)
-
     def get_animal_age(self):
         if self.birth_date:
             return (timezone.now().date() - self.birth_date).days // 365
         return None
+    
+    def get_main_photo_url(self):
+        listing_photo = self.photos.filter(is_main=True).first()
+        if listing_photo and listing_photo.image:
+            return f"{BE_HOST_URL}{listing_photo.image.url}"
+        return None
+
+    @property
+    def main_photo(self):
+        return self.photos.filter(is_main=True).first()
     

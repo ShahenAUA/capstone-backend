@@ -5,13 +5,17 @@ from pet_welfare.models import Profile
 
 class UserGetMeSerializer(serializers.ModelSerializer):
     phone = serializers.CharField(source='profile.phone')
-    # type = serializers.CharField(source='profile.type')
-    # profile_picture = serializers.SerializerMethodField()
+    user_type = serializers.CharField(source='profile.user_type')
+    full_name = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ['id', 'email', 'first_name', 'last_name', 'date_joined', 'phone'] # 'type', 'profile_picture'
+        fields = ['id', 'email', 'full_name', 'date_joined', 'phone', 'user_type'] # , 'profile_picture'
 
+    def get_full_name(self, obj):
+        full_name = "%s %s" % (obj.first_name, obj.last_name)
+        return full_name.strip()
+    
     # def get_profile_picture(self, obj):
     #     try:
     #         profile_picture = obj.profile.profile_picture
