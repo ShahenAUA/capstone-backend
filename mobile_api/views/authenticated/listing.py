@@ -1,8 +1,9 @@
 from typing import Optional
-from datetime import timedelta
-from django.utils import timezone
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import generics, status
 from rest_framework.exceptions import ValidationError
+from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from pet_welfare.models import Listing, Profile, ListingPhoto
 from mobile_api.utils import construct_response, construct_error, handle_validation_error, get_birth_date_for_age
@@ -12,7 +13,32 @@ from mobile_api.messages import UNKNOWN_ERROR, SHELTER_NOT_FOUND, LISTING_CREATE
 class AddAdoptionListingView(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = AddAdoptionListingSerializer
-
+    parser_classes = [MultiPartParser]
+    
+    @swagger_auto_schema(
+        request_body=AddAdoptionListingSerializer,
+        responses={
+            201: openapi.Response(
+                description="Listing created successfully",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'id': openapi.Schema(type=openapi.TYPE_INTEGER)
+                    }
+                )
+            ),
+            400: openapi.Response(description="Invalid input"),
+            500: openapi.Response(description="Internal server error")
+        },
+        manual_parameters=[
+            openapi.Parameter(
+                'photo', 
+                openapi.IN_FORM, 
+                description="Photo of the pet", 
+                type=openapi.TYPE_FILE
+            )
+        ]
+    )
     def post(self, request, *args, **kwargs):
         try:
             serializer = self.serializer_class(data=request.data)
@@ -63,11 +89,27 @@ class AddAdoptionListingView(generics.CreateAPIView):
             print(e)
             return construct_error(message=UNKNOWN_ERROR, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
 class AddLostListingView(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = AddLostListingSerializer
-
+    parser_classes = [MultiPartParser]
+    
+    @swagger_auto_schema(
+        request_body=AddLostListingSerializer,
+        responses={
+            201: openapi.Response(
+                description="Listing created successfully",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'id': openapi.Schema(type=openapi.TYPE_INTEGER)
+                    }
+                )
+            ),
+            400: openapi.Response(description="Invalid input"),
+            500: openapi.Response(description="Internal server error")
+        }
+    )
     def post(self, request, *args, **kwargs):
         try:
             serializer = self.serializer_class(data=request.data)
@@ -164,7 +206,7 @@ class GetAdoptionListingsView(generics.ListAPIView):
 
 class GetLostListingsView(GetAdoptionListingsView):
     permission_classes = [AllowAny,]
-    # serializer_class = LostListingSerializer
+    serializer_class = LostListingSerializer
     authentication_classes=[]
     
     def get_queryset(self):

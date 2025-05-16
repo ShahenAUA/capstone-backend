@@ -9,8 +9,20 @@ class AddAdoptionListingSerializer(serializers.Serializer):
     birth_date = serializers.DateField(required=False, allow_null=True)
     weight = serializers.FloatField(required=False, allow_null=True)
     gender = serializers.ChoiceField(choices=Listing.GENDER_CHOICES, required=False, allow_null=True)
+    photo = serializers.ImageField(required=False)
     description = serializers.CharField(required=False, allow_null=True, allow_blank=True)
     is_vaccinated = serializers.BooleanField(required=False, default=False)
+
+    # def validate(self, attrs):
+    #     photo = attrs.get('photo')
+
+    #     process_uploaded_image(
+    #         image_field_name="photo",
+    #         image=image,
+    #         prefix="listing"
+    #     )
+        
+    #     return attrs
 
 class AddLostListingSerializer(serializers.Serializer):
     name = serializers.CharField(required=False, allow_null=True, allow_blank=True, max_length=100)
@@ -19,6 +31,7 @@ class AddLostListingSerializer(serializers.Serializer):
     birth_date = serializers.DateField(required=False, allow_null=True)
     weight = serializers.FloatField(required=False, allow_null=True)
     gender = serializers.ChoiceField(choices=Listing.GENDER_CHOICES, required=False, allow_null=True)
+    photo = serializers.ImageField(required=False)
     description = serializers.CharField(required=False, allow_null=True, allow_blank=True)
     is_vaccinated = serializers.BooleanField(required=False, default=False)
 
@@ -56,7 +69,7 @@ class LostListingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Listing
         fields = [
-            'id', 'name', 'age', 'type', 'breed', 'description', 'distance_in_km', 'main_photo_url'
+            'id', 'name', 'age', 'type', 'breed', 'description', 'distance_in_km', 'main_photo_url', 'last_seen_date'
         ]
 
     def get_age(self, obj):
