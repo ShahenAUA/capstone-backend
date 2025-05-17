@@ -186,6 +186,9 @@ FROM_EMAIL = 'noreply@petwelfare.com'
 REFRESH_TOKEN_EXPIRED_STATUS_CODE = 497
 ACCESS_TOKEN_EXPIRED_STATUS_CODE = 498
 
+MAX_FILE_WIDTH = 1024
+MAX_FILE_HEIGHT = 1024
+
 secrets_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'secrets.py')
 if os.path.exists(secrets_path):
     from .secrets import DB_USER, DB_PASSWORD, DB_HOST, BE_HOST_URL #, FE_HOST_URL
