@@ -219,6 +219,56 @@ paths:
         description: A page number within the paginated result set.
         required: false
         type: integer
+      - name: type
+        in: query
+        description: Animal type
+        type: string
+        enum:
+        - dog
+        - cat
+        - parrot
+        - turtle
+        - rabbit
+        - fish
+        - hamster
+        - other
+      - name: breed
+        in: query
+        description: Animal breed
+        type: string
+      - name: gender
+        in: query
+        description: Animal gender
+        type: string
+        enum:
+        - male
+        - female
+      - name: min_age
+        in: query
+        description: Minimum age (in years)
+        type: integer
+      - name: max_age
+        in: query
+        description: Maximum age (in years)
+        type: integer
+      - name: min_weight
+        in: query
+        description: Minimum weight (kg)
+        type: number
+        format: float
+      - name: max_weight
+        in: query
+        description: Maximum weight (kg)
+        type: number
+        format: float
+      - name: search
+        in: query
+        description: Search listings based on name, type, breed
+        type: string
+      - name: is_vaccinated
+        in: query
+        description: Vaccination status
+        type: boolean
       responses:
         '200':
           description: ''
@@ -325,6 +375,125 @@ paths:
       tags:
       - user
     parameters: []
+  /user/listings/adoptions/my:
+    get:
+      operationId: user_listings_adoptions_my_list
+      description: ''
+      parameters:
+      - name: page
+        in: query
+        description: A page number within the paginated result set.
+        required: false
+        type: integer
+      responses:
+        '200':
+          description: ''
+          schema:
+            required:
+            - count
+            - results
+            type: object
+            properties:
+              count:
+                type: integer
+              next:
+                type: string
+                format: uri
+                x-nullable: true
+              previous:
+                type: string
+                format: uri
+                x-nullable: true
+              results:
+                type: array
+                items:
+                  $ref: '#/definitions/ListingList'
+      tags:
+      - user
+    parameters: []
+  /user/listings/adoptions/{id}:
+    get:
+      operationId: user_listings_adoptions_read
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/GetAdoptionListingDetails'
+      tags:
+      - user
+      security:
+      - Bearer: []
+    parameters:
+    - name: id
+      in: path
+      required: true
+      type: string
+  /user/listings/bookmark:
+    post:
+      operationId: user_listings_bookmark_create
+      description: ''
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          required:
+          - listing_id
+          type: object
+          properties:
+            listing_id:
+              type: integer
+      responses:
+        '201':
+          description: ''
+          schema:
+            required:
+            - listing_id
+            type: object
+            properties:
+              listing_id:
+                type: integer
+      tags:
+      - user
+    parameters: []
+  /user/listings/get-bookmarks:
+    get:
+      operationId: user_listings_get-bookmarks_list
+      description: ''
+      parameters:
+      - name: page
+        in: query
+        description: A page number within the paginated result set.
+        required: false
+        type: integer
+      responses:
+        '200':
+          description: ''
+          schema:
+            required:
+            - count
+            - results
+            type: object
+            properties:
+              count:
+                type: integer
+              next:
+                type: string
+                format: uri
+                x-nullable: true
+              previous:
+                type: string
+                format: uri
+                x-nullable: true
+              results:
+                type: array
+                items:
+                  $ref: '#/definitions/ListingList'
+      tags:
+      - user
+    parameters: []
   /user/listings/lost:
     get:
       operationId: user_listings_lost_list
@@ -335,6 +504,56 @@ paths:
         description: A page number within the paginated result set.
         required: false
         type: integer
+      - name: type
+        in: query
+        description: Animal type
+        type: string
+        enum:
+        - dog
+        - cat
+        - parrot
+        - turtle
+        - rabbit
+        - fish
+        - hamster
+        - other
+      - name: breed
+        in: query
+        description: Animal breed
+        type: string
+      - name: gender
+        in: query
+        description: Animal gender
+        type: string
+        enum:
+        - male
+        - female
+      - name: min_age
+        in: query
+        description: Minimum age (in years)
+        type: integer
+      - name: max_age
+        in: query
+        description: Maximum age (in years)
+        type: integer
+      - name: min_weight
+        in: query
+        description: Minimum weight (kg)
+        type: number
+        format: float
+      - name: max_weight
+        in: query
+        description: Maximum weight (kg)
+        type: number
+        format: float
+      - name: search
+        in: query
+        description: Search listings based on name, type, breed
+        type: string
+      - name: is_vaccinated
+        in: query
+        description: Vaccination status
+        type: boolean
       responses:
         '200':
           description: ''
@@ -454,6 +673,89 @@ paths:
           description: Internal server error
       consumes:
       - multipart/form-data
+      tags:
+      - user
+    parameters: []
+  /user/listings/lost/my:
+    get:
+      operationId: user_listings_lost_my_list
+      description: ''
+      parameters:
+      - name: page
+        in: query
+        description: A page number within the paginated result set.
+        required: false
+        type: integer
+      responses:
+        '200':
+          description: ''
+          schema:
+            required:
+            - count
+            - results
+            type: object
+            properties:
+              count:
+                type: integer
+              next:
+                type: string
+                format: uri
+                x-nullable: true
+              previous:
+                type: string
+                format: uri
+                x-nullable: true
+              results:
+                type: array
+                items:
+                  $ref: '#/definitions/ListingList'
+      tags:
+      - user
+    parameters: []
+  /user/listings/lost/{id}:
+    get:
+      operationId: user_listings_lost_read
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/GetLostListingDetails'
+      tags:
+      - user
+      security:
+      - Bearer: []
+    parameters:
+    - name: id
+      in: path
+      required: true
+      type: string
+  /user/listings/unmark:
+    post:
+      operationId: user_listings_unmark_create
+      description: ''
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          required:
+          - listing_id
+          type: object
+          properties:
+            listing_id:
+              type: integer
+      responses:
+        '201':
+          description: ''
+          schema:
+            required:
+            - listing_id
+            type: object
+            properties:
+              listing_id:
+                type: integer
       tags:
       - user
     parameters: []
@@ -637,6 +939,73 @@ definitions:
         title: Main photo url
         type: string
         readOnly: true
+  GetAdoptionListingDetails:
+    required:
+    - type
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      name:
+        title: Name
+        type: string
+        maxLength: 100
+        x-nullable: true
+      age:
+        title: Age
+        type: string
+        readOnly: true
+      type:
+        title: Type
+        type: string
+        enum:
+        - dog
+        - cat
+        - parrot
+        - turtle
+        - rabbit
+        - fish
+        - hamster
+        - other
+      breed:
+        title: Breed
+        type: string
+        maxLength: 100
+        x-nullable: true
+      description:
+        title: Description
+        type: string
+        x-nullable: true
+      main_photo_url:
+        title: Main photo url
+        type: string
+        readOnly: true
+      is_vaccinated:
+        title: Is vaccinated
+        type: boolean
+      gender:
+        title: Gender
+        type: string
+        enum:
+        - male
+        - female
+        x-nullable: true
+      weight:
+        title: Weight
+        description: Weight in kg
+        type: number
+        x-nullable: true
+      listing_date:
+        title: Listing date
+        type: string
+        format: date-time
+        readOnly: true
+      contact_info:
+        title: Contact info
+        type: string
+        readOnly: true
   LostListing:
     required:
     - type
@@ -689,6 +1058,87 @@ definitions:
         type: string
         format: date
         x-nullable: true
+  GetLostListingDetails:
+    required:
+    - type
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      name:
+        title: Name
+        type: string
+        maxLength: 100
+        x-nullable: true
+      age:
+        title: Age
+        type: string
+        readOnly: true
+      type:
+        title: Type
+        type: string
+        enum:
+        - dog
+        - cat
+        - parrot
+        - turtle
+        - rabbit
+        - fish
+        - hamster
+        - other
+      breed:
+        title: Breed
+        type: string
+        maxLength: 100
+        x-nullable: true
+      description:
+        title: Description
+        type: string
+        x-nullable: true
+      distance_in_km:
+        title: Distance in km
+        type: string
+        readOnly: true
+      is_vaccinated:
+        title: Is vaccinated
+        type: boolean
+      main_photo_url:
+        title: Main photo url
+        type: string
+        readOnly: true
+      last_seen_date:
+        title: Last seen date
+        type: string
+        format: date
+        x-nullable: true
+      gender:
+        title: Gender
+        type: string
+        enum:
+        - male
+        - female
+        x-nullable: true
+      weight:
+        title: Weight
+        description: Weight in kg
+        type: number
+        x-nullable: true
+      last_seen_location_longitude:
+        title: Last seen location longitude
+        type: string
+        format: decimal
+        x-nullable: true
+      listing_date:
+        title: Listing date
+        type: string
+        format: date-time
+        readOnly: true
+      contact_info:
+        title: Contact info
+        type: string
+        readOnly: true
   UserGetMe:
     required:
     - phone

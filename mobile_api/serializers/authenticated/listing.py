@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from pet_welfare.models import Listing
 from mobile_api.messages import LONGITUDE_LATITUDE_SHOULD_BE_SET
+from mobile_api.utils import process_uploaded_image
 
 class AddAdoptionListingSerializer(serializers.Serializer):
     name = serializers.CharField(required=False, allow_null=True, allow_blank=True, max_length=100)
@@ -12,17 +13,6 @@ class AddAdoptionListingSerializer(serializers.Serializer):
     photo = serializers.ImageField(required=False)
     description = serializers.CharField(required=False, allow_null=True, allow_blank=True)
     is_vaccinated = serializers.BooleanField(required=False, default=False)
-
-    # def validate(self, attrs):
-    #     photo = attrs.get('photo')
-
-    #     process_uploaded_image(
-    #         image_field_name="photo",
-    #         image=image,
-    #         prefix="listing"
-    #     )
-        
-    #     return attrs
 
 class AddLostListingSerializer(serializers.Serializer):
     name = serializers.CharField(required=False, allow_null=True, allow_blank=True, max_length=100)
@@ -60,6 +50,11 @@ class ListingFilterSerializer(serializers.Serializer):
 
     min_weight = serializers.FloatField(required=False, min_value=0)
     max_weight = serializers.FloatField(required=False, min_value=0)
+    
+    is_vaccinated = serializers.BooleanField(required=False)
+    
+    search = serializers.CharField(required=False, allow_blank=True)
+
 
 class LostListingSerializer(serializers.ModelSerializer):
     age = serializers.SerializerMethodField()
@@ -106,7 +101,6 @@ class LostListingSerializer(serializers.ModelSerializer):
         distance = R * c
         return round(distance, 2)
 
-
 class ListingListSerializer(serializers.ModelSerializer):
     age = serializers.SerializerMethodField()
     main_photo_url = serializers.SerializerMethodField()
@@ -116,14 +110,105 @@ class ListingListSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'name', 'age', 'type', 'breed', 'description', 'main_photo_url'
         ]
-        # fields = [
-        #     'id', 'name', 'type', 'breed', 'gender', 'birth_date',
-        #     'weight', 'description', 'listing_type', 'status',
-        #     'last_seen_location_longitude', 'last_seen_location_longitude', 'last_seen_date', 'listing_date', 'age'
-        # ]
 
     def get_age(self, obj):
         return obj.get_animal_age()
 
     def get_main_photo_url(self, obj):
         return obj.get_main_photo_url()
+
+class GetAdoptionListingDetailsSerializer(serializers.ModelSerializer):
+    age = serializers.SerializerMethodField()
+    main_photo_url = serializers.SerializerMethodField()
+    contact_info = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = Listing
+        fields = [
+            'id', 'name', 'age', 'type', 'breed', 'description', 'main_photo_url', 'is_vaccinated',
+            'gender', 'weight', 'listing_date', 'contact_info'
+        ]
+
+    def get_age(self, obj):
+        return obj.get_animal_age()
+
+    def get_main_photo_url(self, obj):
+        return obj.get_main_photo_url()
+    
+    def get_contact_info(self, obj):
+        if obj.shelter:
+            user = obj.shelter.user
+            profile = getattr(user, "profile", None)
+        else:
+            user = obj.user
+            profile = getattr(user, "profile", None)
+
+        return {
+            "full_name": f"{user.first_name} {user.last_name}".strip(),
+            "email": user.email,
+            "phone": profile.phone if profile else None,
+            "is_shelter": profile.is_shelter()
+        }
+
+class GetLostListingDetailsSerializer(serializers.ModelSerializer):
+    age = serializers.SerializerMethodField()
+    distance_in_km = serializers.SerializerMethodField()
+    main_photo_url = serializers.SerializerMethodField()
+    contact_info = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Listing
+        fields = [
+            'id', 'name', 'age', 'type', 'breed', 'description', 'distance_in_km', 'is_vaccinated', 'main_photo_url', 'last_seen_date',
+            'gender', 'weight', 'last_seen_location_longitude', 'last_seen_location_longitude', 'last_seen_date', 'listing_date', 'contact_info'
+        ]
+
+    def get_age(self, obj):
+        return obj.get_animal_age()
+
+    def get_main_photo_url(self, obj):
+        return obj.get_main_photo_url()
+    
+    def get_contact_info(self, obj):
+        if obj.shelter:
+            user = obj.shelter.user
+            profile = getattr(user, "profile", None)
+        else:
+            user = obj.user
+            profile = getattr(user, "profile", None)
+
+        return {
+            "full_name": f"{user.first_name} {user.last_name}".strip(),
+            "email": user.email,
+            "phone": profile.phone if profile else None,
+            "is_shelter": profile.is_shelter()
+        }
+    
+    def get_distance_in_km(self, obj):
+        user_lat = self.context.get('user_latitude')
+        user_lon = self.context.get('user_longitude')
+
+        if (
+            user_lat is not None and user_lon is not None and
+            obj.last_seen_location_latitude is not None and obj.last_seen_location_longitude is not None
+        ):
+            return self._calculate_distance(
+                float(user_lat), float(user_lon),
+                float(obj.last_seen_location_latitude), float(obj.last_seen_location_longitude)
+            )
+        return None
+
+    def _calculate_distance(self, lat1, lon1, lat2, lon2):
+        from math import radians, sin, cos, sqrt, atan2
+
+        # switch here to get different metrics
+        R = 6371  # Earth radius in kilometers
+        # R = 6371000  # Earth radius in meters
+
+        dlat = radians(lat2 - lat1)
+        dlon = radians(lon2 - lon1)
+        a = sin(dlat / 2) ** 2 + cos(radians(lat1)) * cos(radians(lat2)) * sin(dlon / 2) ** 2
+        c = 2 * atan2(sqrt(a), sqrt(1 - a))
+        distance = R * c
+        return round(distance, 2)
+    
