@@ -117,6 +117,29 @@ class ListingListSerializer(serializers.ModelSerializer):
     def get_main_photo_url(self, obj):
         return obj.get_main_photo_url()
 
+class ContactInfoSerializer(serializers.Serializer):
+    full_name = serializers.CharField()
+    email = serializers.EmailField()
+    phone = serializers.CharField(required=False)
+    is_shelter = serializers.BooleanField()
+    address = serializers.CharField()
+    website = serializers.CharField()
+
+    def to_representation(self, instance):
+        user = instance.shelter.user if instance.shelter else instance.user
+        profile = getattr(user, "profile", None)
+        
+        result = {
+            "full_name": f"{user.first_name} {user.last_name}".strip(),
+            "email": user.email,
+            "phone": profile.phone if profile else None,
+            "is_shelter": profile.is_shelter() if profile else False,
+            "address": profile.shelter_profile.address if profile.is_shelter() else None,
+            "website": profile.shelter_profile.website if profile.is_shelter() else None,
+        }
+        
+        return result
+
 class GetAdoptionListingDetailsSerializer(serializers.ModelSerializer):
     age = serializers.SerializerMethodField()
     main_photo_url = serializers.SerializerMethodField()
@@ -136,19 +159,7 @@ class GetAdoptionListingDetailsSerializer(serializers.ModelSerializer):
         return obj.get_main_photo_url()
     
     def get_contact_info(self, obj):
-        if obj.shelter:
-            user = obj.shelter.user
-            profile = getattr(user, "profile", None)
-        else:
-            user = obj.user
-            profile = getattr(user, "profile", None)
-
-        return {
-            "full_name": f"{user.first_name} {user.last_name}".strip(),
-            "email": user.email,
-            "phone": profile.phone if profile else None,
-            "is_shelter": profile.is_shelter()
-        }
+        return ContactInfoSerializer(obj).data
 
 class GetLostListingDetailsSerializer(serializers.ModelSerializer):
     age = serializers.SerializerMethodField()
@@ -170,19 +181,7 @@ class GetLostListingDetailsSerializer(serializers.ModelSerializer):
         return obj.get_main_photo_url()
     
     def get_contact_info(self, obj):
-        if obj.shelter:
-            user = obj.shelter.user
-            profile = getattr(user, "profile", None)
-        else:
-            user = obj.user
-            profile = getattr(user, "profile", None)
-
-        return {
-            "full_name": f"{user.first_name} {user.last_name}".strip(),
-            "email": user.email,
-            "phone": profile.phone if profile else None,
-            "is_shelter": profile.is_shelter()
-        }
+        return ContactInfoSerializer(obj).data
     
     def get_distance_in_km(self, obj):
         user_lat = self.context.get('user_latitude')

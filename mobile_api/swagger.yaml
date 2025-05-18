@@ -1004,8 +1004,29 @@ definitions:
         readOnly: true
       contact_info:
         title: Contact info
-        type: string
-        readOnly: true
+        type: object
+        properties:
+          full_name:
+            title: Full Name
+            type: string
+          email:
+            title: Email
+            type: string
+            format: email
+          phone:
+            title: Phone
+            type: string
+            x-nullable: true
+          is_shelter:
+            title: Is Shelter
+            type: boolean
+          address:
+            title: Address
+            type: string
+          website:
+            title: Website
+            type: string
+            format: uri
   LostListing:
     required:
     - type
@@ -1137,8 +1158,29 @@ definitions:
         readOnly: true
       contact_info:
         title: Contact info
-        type: string
-        readOnly: true
+        type: object
+        properties:
+          full_name:
+            title: Full Name
+            type: string
+          email:
+            title: Email
+            type: string
+            format: email
+          phone:
+            title: Phone
+            type: string
+            x-nullable: true
+          is_shelter:
+            title: Is Shelter
+            type: boolean
+          address:
+            title: Address
+            type: string
+          website:
+            title: Website
+            type: string
+            format: uri
   UserGetMe:
     required:
     - phone
