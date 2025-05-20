@@ -9,7 +9,8 @@ from mobile_api.messages import UNKNOWN_ERROR
 class UserGetMeView(generics.ListAPIView):
     serializer_class = UserGetMeSerializer
     permission_classes = [IsAuthenticated]
-
+    pagination_class = None
+    
     @swagger_auto_schema(
         security=[{'Bearer': []}],
     )

@@ -152,6 +152,40 @@ paths:
       tags:
       - register_shelter
     parameters: []
+  /species:
+    get:
+      operationId: species_list
+      description: ''
+      parameters:
+      - name: type
+        in: query
+        required: true
+        type: string
+        enum:
+        - dog
+        - cat
+        - parrot
+        - turtle
+        - rabbit
+        - fish
+        - hamster
+        - other
+      responses:
+        '200':
+          description: Success
+          schema:
+            type: array
+            items:
+              type: string
+        '400':
+          description: Invalid Input
+        '404':
+          description: Species Not Found
+        '500':
+          description: Server Error
+      tags:
+      - species
+    parameters: []
   /token-refresh:
     post:
       operationId: token-refresh_create
@@ -185,6 +219,56 @@ paths:
         description: A page number within the paginated result set.
         required: false
         type: integer
+      - name: type
+        in: query
+        description: Animal type
+        type: string
+        enum:
+        - dog
+        - cat
+        - parrot
+        - turtle
+        - rabbit
+        - fish
+        - hamster
+        - other
+      - name: breed
+        in: query
+        description: Animal breed
+        type: string
+      - name: gender
+        in: query
+        description: Animal gender
+        type: string
+        enum:
+        - male
+        - female
+      - name: min_age
+        in: query
+        description: Minimum age (in years)
+        type: integer
+      - name: max_age
+        in: query
+        description: Maximum age (in years)
+        type: integer
+      - name: min_weight
+        in: query
+        description: Minimum weight (kg)
+        type: number
+        format: float
+      - name: max_weight
+        in: query
+        description: Maximum weight (kg)
+        type: number
+        format: float
+      - name: search
+        in: query
+        description: Search listings based on name, type, breed
+        type: string
+      - name: is_vaccinated
+        in: query
+        description: Vaccination status
+        type: boolean
       responses:
         '200':
           description: ''
@@ -216,22 +300,84 @@ paths:
       operationId: user_listings_adoptions_add_create
       description: ''
       parameters:
-      - name: data
-        in: body
+      - name: name
+        in: formData
+        required: false
+        type: string
+        maxLength: 100
+        x-nullable: true
+      - name: type
+        in: formData
         required: true
-        schema:
-          $ref: '#/definitions/AddAdoptionListing'
+        type: string
+        enum:
+        - dog
+        - cat
+        - parrot
+        - turtle
+        - rabbit
+        - fish
+        - hamster
+        - other
+      - name: breed
+        in: formData
+        required: false
+        type: string
+        maxLength: 100
+        x-nullable: true
+      - name: birth_date
+        in: formData
+        required: false
+        type: string
+        format: date
+        x-nullable: true
+      - name: weight
+        in: formData
+        required: false
+        type: number
+        x-nullable: true
+      - name: gender
+        in: formData
+        required: false
+        type: string
+        enum:
+        - male
+        - female
+        x-nullable: true
+      - name: photo
+        in: formData
+        description: Photo of the pet
+        type: file
+      - name: description
+        in: formData
+        required: false
+        type: string
+        x-nullable: true
+      - name: is_vaccinated
+        in: formData
+        required: false
+        type: boolean
+        default: false
       responses:
         '201':
-          description: ''
+          description: Listing created successfully
           schema:
-            $ref: '#/definitions/AddAdoptionListing'
+            type: object
+            properties:
+              id:
+                type: integer
+        '400':
+          description: Invalid input
+        '500':
+          description: Internal server error
+      consumes:
+      - multipart/form-data
       tags:
       - user
     parameters: []
-  /user/listings/lost:
+  /user/listings/adoptions/my:
     get:
-      operationId: user_listings_lost_list
+      operationId: user_listings_adoptions_my_list
       description: ''
       parameters:
       - name: page
@@ -265,27 +411,56 @@ paths:
       tags:
       - user
     parameters: []
-  /user/listings/lost/add:
+  /user/listings/adoptions/{id}:
+    get:
+      operationId: user_listings_adoptions_read
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/GetAdoptionListingDetails'
+      tags:
+      - user
+      security:
+      - Bearer: []
+    parameters:
+    - name: id
+      in: path
+      required: true
+      type: string
+  /user/listings/bookmark:
     post:
-      operationId: user_listings_lost_add_create
+      operationId: user_listings_bookmark_create
       description: ''
       parameters:
       - name: data
         in: body
         required: true
         schema:
-          $ref: '#/definitions/AddLostListing'
+          required:
+          - listing_id
+          type: object
+          properties:
+            listing_id:
+              type: integer
       responses:
         '201':
           description: ''
           schema:
-            $ref: '#/definitions/AddLostListing'
+            required:
+            - listing_id
+            type: object
+            properties:
+              listing_id:
+                type: integer
       tags:
       - user
     parameters: []
-  /user/me:
+  /user/listings/get-bookmarks:
     get:
-      operationId: user_me_list
+      operationId: user_listings_get-bookmarks_list
       description: ''
       parameters:
       - name: page
@@ -315,7 +490,287 @@ paths:
               results:
                 type: array
                 items:
-                  $ref: '#/definitions/UserGetMe'
+                  $ref: '#/definitions/ListingList'
+      tags:
+      - user
+    parameters: []
+  /user/listings/lost:
+    get:
+      operationId: user_listings_lost_list
+      description: ''
+      parameters:
+      - name: page
+        in: query
+        description: A page number within the paginated result set.
+        required: false
+        type: integer
+      - name: type
+        in: query
+        description: Animal type
+        type: string
+        enum:
+        - dog
+        - cat
+        - parrot
+        - turtle
+        - rabbit
+        - fish
+        - hamster
+        - other
+      - name: breed
+        in: query
+        description: Animal breed
+        type: string
+      - name: gender
+        in: query
+        description: Animal gender
+        type: string
+        enum:
+        - male
+        - female
+      - name: min_age
+        in: query
+        description: Minimum age (in years)
+        type: integer
+      - name: max_age
+        in: query
+        description: Maximum age (in years)
+        type: integer
+      - name: min_weight
+        in: query
+        description: Minimum weight (kg)
+        type: number
+        format: float
+      - name: max_weight
+        in: query
+        description: Maximum weight (kg)
+        type: number
+        format: float
+      - name: search
+        in: query
+        description: Search listings based on name, type, breed
+        type: string
+      - name: is_vaccinated
+        in: query
+        description: Vaccination status
+        type: boolean
+      responses:
+        '200':
+          description: ''
+          schema:
+            required:
+            - count
+            - results
+            type: object
+            properties:
+              count:
+                type: integer
+              next:
+                type: string
+                format: uri
+                x-nullable: true
+              previous:
+                type: string
+                format: uri
+                x-nullable: true
+              results:
+                type: array
+                items:
+                  $ref: '#/definitions/LostListing'
+      tags:
+      - user
+    parameters: []
+  /user/listings/lost/add:
+    post:
+      operationId: user_listings_lost_add_create
+      description: ''
+      parameters:
+      - name: name
+        in: formData
+        required: false
+        type: string
+        maxLength: 100
+        x-nullable: true
+      - name: type
+        in: formData
+        required: true
+        type: string
+        enum:
+        - dog
+        - cat
+        - parrot
+        - turtle
+        - rabbit
+        - fish
+        - hamster
+        - other
+      - name: breed
+        in: formData
+        required: false
+        type: string
+        maxLength: 100
+        x-nullable: true
+      - name: birth_date
+        in: formData
+        required: false
+        type: string
+        format: date
+        x-nullable: true
+      - name: weight
+        in: formData
+        required: false
+        type: number
+        x-nullable: true
+      - name: gender
+        in: formData
+        required: false
+        type: string
+        enum:
+        - male
+        - female
+        x-nullable: true
+      - name: photo
+        in: formData
+        required: false
+        type: file
+      - name: description
+        in: formData
+        required: false
+        type: string
+        x-nullable: true
+      - name: is_vaccinated
+        in: formData
+        required: false
+        type: boolean
+        default: false
+      - name: last_seen_location_longitude
+        in: formData
+        required: false
+        type: string
+        format: decimal
+      - name: last_seen_location_latitude
+        in: formData
+        required: false
+        type: string
+        format: decimal
+      - name: last_seen_date
+        in: formData
+        required: false
+        type: string
+        format: date
+        x-nullable: true
+      responses:
+        '201':
+          description: Listing created successfully
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+        '400':
+          description: Invalid input
+        '500':
+          description: Internal server error
+      consumes:
+      - multipart/form-data
+      tags:
+      - user
+    parameters: []
+  /user/listings/lost/my:
+    get:
+      operationId: user_listings_lost_my_list
+      description: ''
+      parameters:
+      - name: page
+        in: query
+        description: A page number within the paginated result set.
+        required: false
+        type: integer
+      responses:
+        '200':
+          description: ''
+          schema:
+            required:
+            - count
+            - results
+            type: object
+            properties:
+              count:
+                type: integer
+              next:
+                type: string
+                format: uri
+                x-nullable: true
+              previous:
+                type: string
+                format: uri
+                x-nullable: true
+              results:
+                type: array
+                items:
+                  $ref: '#/definitions/ListingList'
+      tags:
+      - user
+    parameters: []
+  /user/listings/lost/{id}:
+    get:
+      operationId: user_listings_lost_read
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/GetLostListingDetails'
+      tags:
+      - user
+      security:
+      - Bearer: []
+    parameters:
+    - name: id
+      in: path
+      required: true
+      type: string
+  /user/listings/unmark:
+    post:
+      operationId: user_listings_unmark_create
+      description: ''
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          required:
+          - listing_id
+          type: object
+          properties:
+            listing_id:
+              type: integer
+      responses:
+        '201':
+          description: ''
+          schema:
+            required:
+            - listing_id
+            type: object
+            properties:
+              listing_id:
+                type: integer
+      tags:
+      - user
+    parameters: []
+  /user/me:
+    get:
+      operationId: user_me_list
+      description: ''
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/UserGetMe'
       tags:
       - user
       security:
@@ -484,16 +939,24 @@ definitions:
         title: Main photo url
         type: string
         readOnly: true
-  AddAdoptionListing:
+  GetAdoptionListingDetails:
     required:
     - type
     type: object
     properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
       name:
         title: Name
         type: string
         maxLength: 100
         x-nullable: true
+      age:
+        title: Age
+        type: string
+        readOnly: true
       type:
         title: Type
         type: string
@@ -511,15 +974,17 @@ definitions:
         type: string
         maxLength: 100
         x-nullable: true
-      birth_date:
-        title: Birth date
+      description:
+        title: Description
         type: string
-        format: date
         x-nullable: true
-      weight:
-        title: Weight
-        type: number
-        x-nullable: true
+      main_photo_url:
+        title: Main photo url
+        type: string
+        readOnly: true
+      is_vaccinated:
+        title: Is vaccinated
+        type: boolean
       gender:
         title: Gender
         type: string
@@ -527,24 +992,59 @@ definitions:
         - male
         - female
         x-nullable: true
-      description:
-        title: Description
-        type: string
+      weight:
+        title: Weight
+        description: Weight in kg
+        type: number
         x-nullable: true
-      is_vaccinated:
-        title: Is vaccinated
-        type: boolean
-        default: false
-  AddLostListing:
+      listing_date:
+        title: Listing date
+        type: string
+        format: date-time
+        readOnly: true
+      contact_info:
+        title: Contact info
+        type: object
+        properties:
+          full_name:
+            title: Full Name
+            type: string
+          email:
+            title: Email
+            type: string
+            format: email
+          phone:
+            title: Phone
+            type: string
+            x-nullable: true
+          is_shelter:
+            title: Is Shelter
+            type: boolean
+          address:
+            title: Address
+            type: string
+          website:
+            title: Website
+            type: string
+            format: uri
+  LostListing:
     required:
     - type
     type: object
     properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
       name:
         title: Name
         type: string
         maxLength: 100
         x-nullable: true
+      age:
+        title: Age
+        type: string
+        readOnly: true
       type:
         title: Type
         type: string
@@ -562,43 +1062,125 @@ definitions:
         type: string
         maxLength: 100
         x-nullable: true
-      birth_date:
-        title: Birth date
-        type: string
-        format: date
-        x-nullable: true
-      weight:
-        title: Weight
-        type: number
-        x-nullable: true
-      gender:
-        title: Gender
-        type: string
-        enum:
-        - male
-        - female
-        x-nullable: true
       description:
         title: Description
         type: string
         x-nullable: true
-      is_vaccinated:
-        title: Is vaccinated
-        type: boolean
-        default: false
-      last_seen_location_longitude:
-        title: Last seen location longitude
+      distance_in_km:
+        title: Distance in km
         type: string
-        format: decimal
-      last_seen_location_latitude:
-        title: Last seen location latitude
+        readOnly: true
+      main_photo_url:
+        title: Main photo url
         type: string
-        format: decimal
+        readOnly: true
       last_seen_date:
         title: Last seen date
         type: string
         format: date
         x-nullable: true
+  GetLostListingDetails:
+    required:
+    - type
+    type: object
+    properties:
+      id:
+        title: ID
+        type: integer
+        readOnly: true
+      name:
+        title: Name
+        type: string
+        maxLength: 100
+        x-nullable: true
+      age:
+        title: Age
+        type: string
+        readOnly: true
+      type:
+        title: Type
+        type: string
+        enum:
+        - dog
+        - cat
+        - parrot
+        - turtle
+        - rabbit
+        - fish
+        - hamster
+        - other
+      breed:
+        title: Breed
+        type: string
+        maxLength: 100
+        x-nullable: true
+      description:
+        title: Description
+        type: string
+        x-nullable: true
+      distance_in_km:
+        title: Distance in km
+        type: string
+        readOnly: true
+      is_vaccinated:
+        title: Is vaccinated
+        type: boolean
+      main_photo_url:
+        title: Main photo url
+        type: string
+        readOnly: true
+      last_seen_date:
+        title: Last seen date
+        type: string
+        format: date
+        x-nullable: true
+      gender:
+        title: Gender
+        type: string
+        enum:
+        - male
+        - female
+        x-nullable: true
+      weight:
+        title: Weight
+        description: Weight in kg
+        type: number
+        x-nullable: true
+      last_seen_location_longitude:
+        title: Last seen location longitude
+        type: string
+        format: decimal
+        x-nullable: true
+      listing_date:
+        title: Listing date
+        type: string
+        format: date-time
+        readOnly: true
+      contact_info:
+        title: Contact info
+        type: object
+        properties:
+          full_name:
+            title: Full Name
+            type: string
+          email:
+            title: Email
+            type: string
+            format: email
+          phone:
+            title: Phone
+            type: string
+            x-nullable: true
+          is_shelter:
+            title: Is Shelter
+            type: boolean
+          address:
+            title: Address
+            type: string
+          website:
+            title: Website
+            type: string
+            format: uri
   UserGetMe:
     required:
     - phone
