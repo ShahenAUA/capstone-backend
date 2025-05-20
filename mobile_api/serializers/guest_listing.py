@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from pet_welfare.models import Listing
+from mobile_api.utils import calculate_distance
 
 class ListingFilterSerializer(serializers.Serializer):
     listing_type = serializers.ChoiceField(choices=Listing.LISTING_TYPE_CHOICES, required=False)
@@ -43,25 +44,11 @@ class LostListingSerializer(serializers.ModelSerializer):
             user_lat is not None and user_lon is not None and
             obj.last_seen_location_latitude is not None and obj.last_seen_location_longitude is not None
         ):
-            return self._calculate_distance(
+            return calculate_distance(
                 float(user_lat), float(user_lon),
                 float(obj.last_seen_location_latitude), float(obj.last_seen_location_longitude)
             )
         return None
-
-    def _calculate_distance(self, lat1, lon1, lat2, lon2):
-        from math import radians, sin, cos, sqrt, atan2
-
-        # switch here to get different metrics
-        R = 6371  # Earth radius in kilometers
-        # R = 6371000  # Earth radius in meters
-
-        dlat = radians(lat2 - lat1)
-        dlon = radians(lon2 - lon1)
-        a = sin(dlat / 2) ** 2 + cos(radians(lat1)) * cos(radians(lat2)) * sin(dlon / 2) ** 2
-        c = 2 * atan2(sqrt(a), sqrt(1 - a))
-        distance = R * c
-        return round(distance, 2)
     
 class ContactInfoSerializer(serializers.Serializer):
     full_name = serializers.CharField()
@@ -137,23 +124,8 @@ class GetLostListingDetailsSerializer(serializers.ModelSerializer):
             user_lat is not None and user_lon is not None and
             obj.last_seen_location_latitude is not None and obj.last_seen_location_longitude is not None
         ):
-            return self._calculate_distance(
+            return calculate_distance(
                 float(user_lat), float(user_lon),
                 float(obj.last_seen_location_latitude), float(obj.last_seen_location_longitude)
             )
         return None
-
-    def _calculate_distance(self, lat1, lon1, lat2, lon2):
-        from math import radians, sin, cos, sqrt, atan2
-
-        # switch here to get different metrics
-        R = 6371  # Earth radius in kilometers
-        # R = 6371000  # Earth radius in meters
-
-        dlat = radians(lat2 - lat1)
-        dlon = radians(lon2 - lon1)
-        a = sin(dlat / 2) ** 2 + cos(radians(lat1)) * cos(radians(lat2)) * sin(dlon / 2) ** 2
-        c = 2 * atan2(sqrt(a), sqrt(1 - a))
-        distance = R * c
-        return round(distance, 2)
-    
