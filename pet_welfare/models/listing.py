@@ -1,3 +1,4 @@
+import os
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
@@ -85,3 +86,9 @@ class Listing(models.Model):
     def main_photo(self):
         return self.photos.filter(is_main=True).first()
     
+    def delete(self, *args, **kwargs):
+        for photo in self.photos.all():
+            if photo.image and os.path.isfile(photo.image.path):
+                os.remove(photo.image.path)
+        super().delete(*args, **kwargs)
+        

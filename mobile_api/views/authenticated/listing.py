@@ -2,13 +2,15 @@ from typing import Optional
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import generics, status
+from rest_framework.views import APIView
 from rest_framework.exceptions import ValidationError
 from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from pet_welfare.models import Listing, Profile, ListingPhoto
 from mobile_api.utils import construct_response, construct_error, handle_validation_error, process_uploaded_image
 from mobile_api.serializers import (AddAdoptionListingSerializer, AddLostListingSerializer, ListingListSerializer)
-from mobile_api.messages import UNKNOWN_ERROR, SHELTER_NOT_FOUND, LISTING_CREATED_SUCCESS, PROFILE_NOT_FOUND
+from mobile_api.messages import (UNKNOWN_ERROR, SHELTER_NOT_FOUND, LISTING_CREATED_SUCCESS, PROFILE_NOT_FOUND,
+                                 LISTING_NOT_FOUND, UNAUTHORIZED_LISTING_DELETE, LISTING_DELETED_SUCCESS)
 
 class AddAdoptionListingView(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
@@ -225,6 +227,23 @@ class GetMyLostListingsView(generics.ListAPIView):
             return construct_response(data=self.get_paginated_response(serializer.data).data)
         except ValidationError as e:
             return handle_validation_error(e)
+        except Exception as e:
+            print(e)
+            return construct_error(message=UNKNOWN_ERROR, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class DeleteListingView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, id):
+        try:
+            listing = Listing.objects.filter(id=id, listing_type=Listing.ADOPTION).first()
+            if not listing:
+                return construct_error(message=LISTING_NOT_FOUND, status=status.HTTP_404_NOT_FOUND)
+            if listing.user != request.user:
+                return construct_error(message=UNAUTHORIZED_LISTING_DELETE, status=status.HTTP_403_FORBIDDEN)
+            
+            listing.delete()
+            return construct_response(message=LISTING_DELETED_SUCCESS, status=status.HTTP_200_OK)
         except Exception as e:
             print(e)
             return construct_error(message=UNKNOWN_ERROR, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

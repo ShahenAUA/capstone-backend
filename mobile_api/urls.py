@@ -29,6 +29,8 @@ urlpatterns = [
     path('user/listings/adoptions/add', AddAdoptionListingView.as_view(), name='add-listing-adoption'),
     path('user/listings/lost/add', AddLostListingView.as_view(), name='add-listing-lost'),
     
+    path('user/listings/delete/<int:id>', DeleteListingView.as_view(), name='delete-listing'),
+
     path('user/listings/adoptions/<int:id>', GetAdoptionListingDetailsView.as_view(), name='get-listing-detail-adoption'),
     path('user/listings/lost/<int:id>', GetLostListingDetailsView.as_view(), name='get-listing-detail-lost'),
 

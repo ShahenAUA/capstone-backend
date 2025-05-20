@@ -9,6 +9,7 @@ PASSWORD_RESET_SUCCESSFULLY = _('Password has been reset successfully.')
 LISTING_CREATED_SUCCESS = _('Listing created successfully.')
 BOOKMARKED_SUCCESSFULLY = _('Listing bookmarked successfully.')
 BOOKMARK_REMOVED_SUCCESSFULLY = _('Bookmark removed successfully.')
+LISTING_DELETED_SUCCESS = _('Listing deleted successfully')
 
 # errors
 ACTIVATE_BEFORE_LOGIN = _('Confirm your account before logging in.')
@@ -48,3 +49,5 @@ LISTING_ID_REQUIRED = _('listing_id is required')
 ALREADY_BOOKMARKED = _('Listing already bookmarked')
 BOOKMARK_NOT_FOUND = _('Bookmark not found')
 CANNOT_BOOKMARK_YOUR_LISTING = _('Cannot bookmark your own listing.')
+LISTING_NOT_FOUND = _('Listing not found')
+UNAUTHORIZED_LISTING_DELETE = _('You are not authorized to delete this listing')

@@ -458,6 +458,21 @@ paths:
       tags:
       - user
     parameters: []
+  /user/listings/delete/{id}:
+    delete:
+      operationId: user_listings_delete_delete
+      description: ''
+      parameters: []
+      responses:
+        '204':
+          description: ''
+      tags:
+      - user
+    parameters:
+    - name: id
+      in: path
+      required: true
+      type: string
   /user/listings/get-bookmarks:
     get:
       operationId: user_listings_get-bookmarks_list
