@@ -192,7 +192,7 @@ class GetLostListingDetailsView(generics.RetrieveAPIView):
     serializer_class = GetLostListingDetailsSerializer
     permission_classes = [AllowAny,]
     lookup_field = 'id'
-    # authentication_classes=[]
+    authentication_classes=[]
 
     def get_queryset(self):
         return Listing.objects.filter(listing_type=Listing.LOST)
