@@ -113,7 +113,7 @@ class GetLostListingDetailsSerializer(serializers.ModelSerializer):
         model = Listing
         fields = [
             'id', 'name', 'age', 'type', 'breed', 'description', 'distance_in_km', 'is_vaccinated', 'main_photo_url', 'last_seen_date',
-            'gender', 'weight', 'last_seen_location_longitude', 'last_seen_location_longitude', 'last_seen_date', 'listing_date', 'contact_info', 'is_bookmarked'
+            'gender', 'weight', 'last_seen_location_longitude', 'last_seen_location_longitude', 'last_seen_date', 'listing_date', 'contact_info'
         ]
 
     def get_age(self, obj):
@@ -138,10 +138,3 @@ class GetLostListingDetailsSerializer(serializers.ModelSerializer):
                 float(obj.last_seen_location_latitude), float(obj.last_seen_location_longitude)
             )
         return None
-    
-    def get_is_bookmarked(self, obj):
-        request = self.context.get('request')
-        
-        if request and request.user.is_authenticated:
-            return ListingBookmark.objects.filter(user=request.user, listing=obj).exists()
-        return False

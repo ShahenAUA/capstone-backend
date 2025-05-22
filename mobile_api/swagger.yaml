@@ -1200,10 +1200,6 @@ definitions:
             title: Website
             type: string
             format: uri
-      is_bookmarked:
-        title: Is bookmarked
-        type: boolean
-        readOnly: true
   UserGetMe:
     required:
     - phone
