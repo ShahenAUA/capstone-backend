@@ -107,7 +107,6 @@ class GetLostListingDetailsSerializer(serializers.ModelSerializer):
     distance_in_km = serializers.SerializerMethodField()
     main_photo_url = serializers.SerializerMethodField()
     contact_info = serializers.SerializerMethodField()
-    is_bookmarked = serializers.SerializerMethodField()
 
     class Meta:
         model = Listing
