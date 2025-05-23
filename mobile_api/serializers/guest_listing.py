@@ -112,7 +112,7 @@ class GetLostListingDetailsSerializer(serializers.ModelSerializer):
         model = Listing
         fields = [
             'id', 'name', 'age', 'type', 'breed', 'description', 'distance_in_km', 'is_vaccinated', 'main_photo_url', 'last_seen_date',
-            'gender', 'weight', 'last_seen_location_longitude', 'last_seen_location_longitude', 'last_seen_date', 'listing_date', 'contact_info'
+            'gender', 'weight', 'last_seen_location_longitude', 'last_seen_location_latitude', 'last_seen_date', 'listing_date', 'contact_info'
         ]
 
     def get_age(self, obj):
