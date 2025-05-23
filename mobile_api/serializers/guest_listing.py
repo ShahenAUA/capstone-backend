@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from pet_welfare.models import Listing
+from pet_welfare.models import Listing, ListingBookmark
 from mobile_api.utils import calculate_distance
 
 class ListingFilterSerializer(serializers.Serializer):
@@ -77,12 +77,13 @@ class GetAdoptionListingDetailsSerializer(serializers.ModelSerializer):
     age = serializers.SerializerMethodField()
     main_photo_url = serializers.SerializerMethodField()
     contact_info = serializers.SerializerMethodField()
+    is_bookmarked = serializers.SerializerMethodField()
     
     class Meta:
         model = Listing
         fields = [
             'id', 'name', 'age', 'type', 'breed', 'description', 'main_photo_url', 'is_vaccinated',
-            'gender', 'weight', 'listing_date', 'contact_info'
+            'gender', 'weight', 'listing_date', 'contact_info', 'is_bookmarked'
         ]
 
     def get_age(self, obj):
@@ -93,6 +94,13 @@ class GetAdoptionListingDetailsSerializer(serializers.ModelSerializer):
     
     def get_contact_info(self, obj):
         return ContactInfoSerializer(obj).data
+    
+    def get_is_bookmarked(self, obj):
+        request = self.context.get('request')
+        
+        if request and request.user.is_authenticated:
+            return ListingBookmark.objects.filter(user=request.user, listing=obj).exists()
+        return False
 
 class GetLostListingDetailsSerializer(serializers.ModelSerializer):
     age = serializers.SerializerMethodField()
@@ -104,7 +112,7 @@ class GetLostListingDetailsSerializer(serializers.ModelSerializer):
         model = Listing
         fields = [
             'id', 'name', 'age', 'type', 'breed', 'description', 'distance_in_km', 'is_vaccinated', 'main_photo_url', 'last_seen_date',
-            'gender', 'weight', 'last_seen_location_longitude', 'last_seen_location_longitude', 'last_seen_date', 'listing_date', 'contact_info'
+            'gender', 'weight', 'last_seen_location_longitude', 'last_seen_location_latitude', 'last_seen_date', 'listing_date', 'contact_info'
         ]
 
     def get_age(self, obj):
