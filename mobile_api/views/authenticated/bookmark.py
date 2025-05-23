@@ -34,7 +34,7 @@ class AddListingBookmarkView(APIView):
                 return construct_error(ADOPTION_LISTING_NOT_FOUND, status=status.HTTP_404_NOT_FOUND)
 
             if listing.user == request.user:
-                return construct_response(CANNOT_BOOKMARK_YOUR_LISTING, status=status.HTTP_400_BAD_REQUEST)
+                return construct_error(CANNOT_BOOKMARK_YOUR_LISTING, identifier='listing_id', status=status.HTTP_400_BAD_REQUEST)
             
             bookmark, created = ListingBookmark.objects.get_or_create(user=request.user, listing=listing)
             if created:
